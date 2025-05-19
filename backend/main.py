@@ -648,6 +648,9 @@ def apply_classes(df, timestamp_start, timestamp_end,
     
     # Load models
     distance_clf = joblib.load(distance_tree_path)
+    if not hasattr(distance_clf, "monotonic_cst"):
+        distance_clf.monotonic_cst = None
+
     fear_clf     = joblib.load(fear_tree_path)
     freeze_clf   = joblib.load(freeze_tree_path)
 
