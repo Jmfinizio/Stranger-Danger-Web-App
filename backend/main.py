@@ -699,8 +699,10 @@ def apply_classes(df, timestamp_start, timestamp_end,
         lambda x: (ts_start + datetime.timedelta(seconds=int(x))).time().strftime(time_format)
     )
 
+    df['freeze'] = df['freeze'].fillna(0).astype("Int64")
+
     # 8) Return only the final columns
-    return df[['timestamp', 'second', 'proximity to parent', 'proximity to stranger', 'fear', 'freeze']]
+    return df[['timestamp', 'second', 'proximity to parent', 'proximity to stranger', 'facial_movement', 'fear', 'freeze']]
 
 async def process_video_async(process_id: str, video_path: Path, session_dir: Path,
                               timestamp1: str, timestamp2: str, timestamp3: str, temp_dir: Path):
