@@ -15,6 +15,7 @@ import pandas as pd
 import tempfile
 import warnings
 import shutil
+import platform
 from pathlib import Path
 from PIL import Image
 import ffmpeg
@@ -400,12 +401,25 @@ def format_progress_message(stage, current, total, extras=None):
         return f"{base} - {', '.join(f'{k}: {v}' for k,v in extras.items())}"
     return base
 
+def get_ffmpeg_path() -> str:
+    import platform
+    from pathlib import Path
+
+    system = platform.system()
+    binary = "ffmpeg.exe" if system == "Windows" else "ffmpeg"
+    ffmpeg_path = Path(__file__).parent.parent / binary
+
+    if not ffmpeg_path.exists():
+        raise FileNotFoundError(f"Missing ffmpeg binary: {ffmpeg_path}")
+    return str(ffmpeg_path.resolve())
+
 def crop_video(process_id: str, video_path: str, timestamp1: str, timestamp2: str, 
-              timestamp3: str, temp_dir: str, ffmpeg_path: str = 'ffmpeg') -> tuple[str, str]:
+              timestamp3: str, temp_dir: str) -> tuple[str, str]:
     """
     Crop the video into two clips with cancellation support
     """
     temp_dir_path = Path(temp_dir)
+    ffmpeg_path = get_ffmpeg_path()
     
     # Create temp directory if it doesn't exist
     temp_dir_path.mkdir(parents=True, exist_ok=True)
